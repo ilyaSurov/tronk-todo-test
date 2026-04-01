@@ -1,0 +1,24 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# Зависимости, версии
+package-lock.json
+
+# Окружение
+.env
+.env.local
+.env.development
+.env.production
+
+# Build/logs
+dist/
+build/
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

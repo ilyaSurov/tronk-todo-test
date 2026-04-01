@@ -1,6 +1,6 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss']
+  ssr: false,
+  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss', '@vueuse/nuxt'],
+  css: ['~/assets/css/main.css'],  // @tailwind base; @tailwind components; @tailwind utilities;
+  runtimeConfig: { public: { apiBase: '/api' } }  // Proxy для backend
 })
