@@ -1,5 +1,6 @@
 // backend/routes/tasks.js
 const express = require("express");
+const { jwtAuth } = require("../middleware/jwtAuth");
 const router = express.Router();
 const {
   getAllTasks,
@@ -13,7 +14,7 @@ const { validateTaskDto } = require("../middleware/validation");
 // DTO: фронт ожидает:
 // { id, title, description, dueDate, isCompleted, createdBy }
 
-router.get("/", async (req, res) => {
+router.get("/", jwtAuth, async (req, res) => {
   try {
     const tasks = await getAllTasks();
     // Опционально: сортировка по дате/статусу
@@ -24,7 +25,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", jwtAuth, async (req, res) => {
   const body = req.body;
   const validation = validateTaskDto(body);
   if (!validation.valid) {
@@ -45,7 +46,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", jwtAuth, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const body = req.body;
   const validation = validateTaskDto(body);
@@ -73,7 +74,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", jwtAuth, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   try {
     const task = await getTaskById(id);
