@@ -10,6 +10,11 @@ const USERS = [
     role: "user",
   },
   {
+    email: "user-2@test.com",
+    password: "123456",
+    role: "user",
+  },
+  {
     email: "admin@test.com",
     password: "admin123",
     role: "admin",
@@ -31,7 +36,7 @@ router.post("/login", (req, res) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-  const token = generateToken(user.email);
+  const token = generateToken({ email: user.email, role: user.role });
   res.status(200).json({
     token,
     user: { email: user.email, role: user.role },

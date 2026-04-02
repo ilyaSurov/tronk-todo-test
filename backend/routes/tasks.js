@@ -33,14 +33,18 @@ router.post("/", jwtAuth, async (req, res) => {
   }
 
   try {
-    const id = await createTask({
+    const created = await createTask({
       title: body.title,
       description: body.description,
-      dueDate: body.dueDate,
+      dueDate: validation.normalized.dueDate,
       isCompleted: body.isCompleted || false,
       createdBy: body.createdBy || "anonymous",
     });
-    res.status(201).json({ ...body, id });
+    res.status(201).json({
+      ...body,
+      dueDate: validation.normalized.dueDate,
+      id: created.id,
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -49,7 +53,9 @@ router.post("/", jwtAuth, async (req, res) => {
 router.put("/:id", jwtAuth, async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const body = req.body;
-  const validation = validateTaskDto(body);
+  const user = req.user;
+  const validation = validateTaskDto(body, { requireCreatedBy: false });
+  
   if (!validation.valid) {
     return res.status(400).json({ error: validation.error });
   }
@@ -60,15 +66,25 @@ router.put("/:id", jwtAuth, async (req, res) => {
       return res.status(404).json({ error: "Task not found" });
     }
 
+    if (task.createdBy !== user.email && user.role !== "admin") {
+      return res.status(403).json({
+        error: "Forbidden: only creator or admin can edit this task",
+      });
+    }
+
     await updateTask(id, {
       title: body.title,
       description: body.description,
-      dueDate: body.dueDate,
+      dueDate: validation.normalized.dueDate,
       isCompleted: body.isCompleted,
-      createdBy: body.createdBy,
     });
 
-    res.status(200).json({ ...body, id });
+    res.status(200).json({
+      ...body,
+      dueDate: validation.normalized.dueDate,
+      createdBy: task.createdBy,
+      id,
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -76,10 +92,17 @@ router.put("/:id", jwtAuth, async (req, res) => {
 
 router.delete("/:id", jwtAuth, async (req, res) => {
   const id = parseInt(req.params.id, 10);
+  const user = req.user;
   try {
     const task = await getTaskById(id);
     if (!task) {
       return res.status(404).json({ error: "Task not found" });
+    }
+
+    if (task.createdBy !== user.email && user.role !== "admin") {
+      return res.status(403).json({
+        error: "Forbidden: only creator or admin can edit this task",
+      });
     }
 
     await deleteTask(id);
