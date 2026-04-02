@@ -1,75 +1,81 @@
-# Nuxt Minimal Starter
+## Frontend (Nuxt + Tailwind)
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+### Требования
 
-## Setup
+- Node.js 18+ (рекомендуется 18/20)
+- npm
 
-Make sure to install dependencies:
+### Установка
+
+Из корня репозитория:
 
 ```bash
-# npm
+cd frontend
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+### Запуск в dev режиме
 
-Start the development server on `http://localhost:3000`:
+Фронтенд запускается на **`http://localhost:8080`** (порт закреплён в `nuxt.config.ts`).
 
 ```bash
-# npm
+cd frontend
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Если `8080` занят — сервер dev **не стартует** (это специально, чтобы не конфликтовать с backend на 3000). Освободи порт 8080 или останови процесс, который его держит.
+
+### Конфигурация API
+
+По умолчанию фронтенд использует backend по адресу:
+
+- `http://localhost:3000/api`
+
+Можно переопределить переменной окружения:
+
+- **`NUXT_PUBLIC_API_BASE`**
+
+Пример (PowerShell):
+
+```powershell
+$env:NUXT_PUBLIC_API_BASE="http://localhost:3000/api"
+npm run dev
+```
+
+### Запуск вместе с backend
+
+В одном терминале:
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+В другом терминале:
+
+```bash
+cd frontend
+npm run dev
+```
+
+### Доступы для логина
+
+- `user@test.com / 123456` — пользователь
+- `admin@test.com / admin123` — администратор
+
+### Сборка и preview
 
 Build the application for production:
 
 ```bash
-# npm
+cd frontend
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-# npm
+cd frontend
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
